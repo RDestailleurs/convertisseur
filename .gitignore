@@ -1,0 +1,29 @@
+# Fichiers et dossiers à ignorer pour un projet .NET/WinForms
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vs/
+# Ignorer les fichiers de publication
+publish/
+# Ignorer les paquets NuGet locaux
+*.nupkg
+# Ignorer les fichiers de logs
+*.log
+# Ignorer les fichiers temporaires
+*.tmp
+*.temp
+# Ignorer les fichiers de configuration locaux
+appsettings.*.local.json
+# Ignorer les fichiers générés par Visual Studio
+.vscode/
+# Ignorer les exécutables et DLL
+*.exe
+*.dll
+*.pdb
+# Ignorer les fichiers de test
+TestResults/
+# Ignorer les fichiers de cache
+.vs/
