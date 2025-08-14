@@ -35,6 +35,6 @@ Ce projet est une application Windows Forms en C# permettant de télécharger de
 - yt-dlp et ffmpeg sont nécessaires pour le bon fonctionnement.
 - Le dossier `bin/` et `obj/` ne doivent pas être versionnés (voir `.gitignore`).
 
----
+----
 
 Projet développé par RDestailleurs.
