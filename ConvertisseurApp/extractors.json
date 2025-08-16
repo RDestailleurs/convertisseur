@@ -1,0 +1,11 @@
+{
+
+    "video": [
+        "youtube", "vimeo", "dailymotion", "twitch", "tiktok", "facebook", "arte", "peertube", "twitter", "instagram", "rutube", "vk", "youku", "zdf"
+    ],
+    "audio": [
+        "soundcloud", "bandcamp", "mixcloud", "deezer", "music.apple", "music.youtube", "yandexmusic", "qqmusic", "zingmp3"
+    ]
+
+
+}
