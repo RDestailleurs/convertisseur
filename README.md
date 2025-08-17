@@ -4,7 +4,7 @@ Ce projet est une application Windows Forms en C# permettant de télécharger de
 
 ## Prérequis
 
-- .NET 6 SDK ou supérieur : https://dotnet.microsoft.com/download
+- .NET 6 SDK ou supérieur : https://dotnet.microsoft.com/download 
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp/releases/latest) : placez `yt-dlp.exe` dans le dossier du projet ou à côté de l'exécutable généré
 - [ffmpeg](https://ffmpeg.org/download.html) : doit être accessible dans le PATH système (pour la conversion en mp3/mp4)
 
