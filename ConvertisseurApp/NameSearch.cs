@@ -74,10 +74,10 @@ namespace ConvertisseurApp
                 var lines = output.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
                 for (int i = 0; i + 3 < lines.Length; )
                 {
-                    string extractor = lines[i];
-                    string title = lines[i + 1];
-                    string uploader = lines[i + 2];
-                    string id = lines[i + 3];
+                    string extractor = lines[i].Trim(' ', '\'', '"');
+                    string title = lines[i + 1].Trim(' ', '\'', '"');
+                    string uploader = lines[i + 2].Trim(' ', '\'', '"');
+                    string id = lines[i + 3].Trim(' ', '\'', '"');
                     string url = BuildPageUrl(extractor, id);
                     if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(id) && !string.IsNullOrWhiteSpace(url))
                     {
@@ -107,8 +107,10 @@ namespace ConvertisseurApp
         // Construit l'URL de la page vidéo à partir de l'extractor et de l'id
         private static string BuildPageUrl(string extractor, string id)
         {
-            if (string.IsNullOrWhiteSpace(extractor) || string.IsNullOrWhiteSpace(id))
-                return null;
+            if (string.IsNullOrWhiteSpace(extractor))
+                throw new ArgumentException("Extractor ne peut pas être vide ou null", nameof(extractor));
+            if (string.IsNullOrWhiteSpace(id))
+                throw new ArgumentException("Id ne peut pas être vide ou null", nameof(id));
             switch (extractor.ToLower())
             {
                 case "youtube":
@@ -119,7 +121,7 @@ namespace ConvertisseurApp
                     return $"https://www.dailymotion.com/video/{id}";
                 // Ajouter d'autres extracteurs si besoin
                 default:
-                    return null;
+                    throw new NotSupportedException($"Extractor inconnu ou non supporté : {extractor}");
             }
         }
 
