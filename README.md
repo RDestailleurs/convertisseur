@@ -12,7 +12,7 @@ Ce projet est une application Windows Forms en C# permettant de télécharger de
 
 1. Clonez le dépôt ou téléchargez les sources.
 2. Ouvrez un terminal dans le dossier du projet (`ConvertisseurApp`). 
-3. Compilez le projet :
+3. Compilez le projet : 
    ```powershell
    dotnet build
    ```
