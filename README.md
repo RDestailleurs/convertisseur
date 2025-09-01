@@ -23,7 +23,7 @@ Ce projet est une application Windows Forms en C# permettant de télécharger de
    L'exécutable sera dans `ConvertisseurApp/bin/Release/net6.0-windows/win-x64/publish/`
 
 ## Utilisation
-
+ 
 - Lancez l'application (`dotnet run --project ConvertisseurApp` ou l'exécutable généré).
 - Entrez le lien de la vidéo.
 - Choisissez le format (mp3/mp4).
