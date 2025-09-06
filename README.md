@@ -16,7 +16,7 @@ Ce projet est une application Windows Forms en C# permettant de télécharger de
    ```powershell
    dotnet build
    ```
-4. (Optionnel) Pour générer un exécutable autonome : 
+4. (Optionnel) Pour générer un exécutable autonome :
    ```powershell
    dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
    ```
