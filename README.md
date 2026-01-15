@@ -25,7 +25,7 @@ Ce projet est une application Windows Forms en C# permettant de télécharger de
 ## Utilisation
  
 - Lancez l'application (`dotnet run --project ConvertisseurApp` ou l'exécutable généré).
-- Entrez le lien de la vidéo.
+- Entrez le lien de la vidéo. 
 - Choisissez le format (mp3/mp4). 
 - Cliquez sur "Télécharger".
 - Le fichier sera enregistré dans le dossier Téléchargements par défaut (modifiable).
