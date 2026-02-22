@@ -270,103 +270,103 @@ namespace ConvertisseurApp
 			}
 	}
 
-									// Méthode utilitaire pour télécharger une vidéo/audio avec yt-dlp
-									public static async Task DownloadVideoAsync(string url, string format, string downloadFolder, IProgress<int>? progress = null)
-									{
-										if (string.IsNullOrWhiteSpace(url))
-											throw new ArgumentException("Le lien est vide.");
+		// Méthode utilitaire pour télécharger une vidéo/audio avec yt-dlp
+		public static async Task DownloadVideoAsync(string url, string format, string downloadFolder, IProgress<int>? progress = null)
+			{
+				if (string.IsNullOrWhiteSpace(url))
+					throw new ArgumentException("Le lien est vide.");
 
-										string ytDlpExe = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "yt-dlp.exe");
-										string outputTemplate = Path.Combine(downloadFolder, "%(title)s.%(ext)s");
-										string args = format == "mp3"
-											? $"--extract-audio --audio-format mp3 -o \"{outputTemplate}\" \"{url}\""
-											: $"-f bestvideo+bestaudio --merge-output-format mp4 -o \"{outputTemplate}\" \"{url}\"";
+				string ytDlpExe = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "yt-dlp.exe");
+				string outputTemplate = Path.Combine(downloadFolder, "%(title)s.%(ext)s");
+				string args = format == "mp3"
+									? $"--extract-audio --audio-format mp3 -o \"{outputTemplate}\" \"{url}\""
+									: $"-f bestvideo+bestaudio --merge-output-format mp4 -o \"{outputTemplate}\" \"{url}\"";
 
-										var process = new System.Diagnostics.Process();
-										process.StartInfo.FileName = ytDlpExe;
-										process.StartInfo.Arguments = args;
-										process.StartInfo.UseShellExecute = false;
-										process.StartInfo.RedirectStandardOutput = true;
-										process.StartInfo.RedirectStandardError = true;
-										process.StartInfo.CreateNoWindow = true;
-										process.EnableRaisingEvents = true;
+				var process = new System.Diagnostics.Process();
+				process.StartInfo.FileName = ytDlpExe;
+				process.StartInfo.Arguments = args;
+				process.StartInfo.UseShellExecute = false;
+				process.StartInfo.RedirectStandardOutput = true;
+				process.StartInfo.RedirectStandardError = true;
+				process.StartInfo.CreateNoWindow = true;
+				process.EnableRaisingEvents = true;
 
-										if (progress != null)
-											progress.Report(0);
+				if (progress != null)
+					progress.Report(0);
 
-										process.OutputDataReceived += (s, ev) =>
+				process.OutputDataReceived += (s, ev) =>
+					{
+						if (ev.Data != null)
+							{
+								var match = System.Text.RegularExpressions.Regex.Match(ev.Data, @"\[download\]\s+(\d{1,3}\.\d)%");
+									if (match.Success)
+										{
+											if (double.TryParse(match.Groups[1].Value.Replace('.', ','), out double percent))
+												{
+													int value = (int)Math.Round(percent);
+													progress?.Report(Math.Min(value, 100));
+												}
+										}
+							}
+					};
+
+				try
+					{
+						process.Start();
+						process.BeginOutputReadLine();
+						string error = await process.StandardError.ReadToEndAsync();
+						process.WaitForExit();
+						progress?.Report(100);
+						if (!string.IsNullOrWhiteSpace(error))
+						{
+							// Si l'erreur concerne le format, tente un fallback en 'best'
+							if (error.Contains("requested format not available") || error.Contains("no suitable format found") || error.Contains("format") || error.Contains("ffmpeg"))
+								{
+									// Relance yt-dlp avec le format 'best'
+									var fallbackArgs = $"-f best -o \"{outputTemplate}\" \"{url}\"";
+									var fallbackProcess = new System.Diagnostics.Process();
+									fallbackProcess.StartInfo.FileName = ytDlpExe;
+									fallbackProcess.StartInfo.Arguments = fallbackArgs;
+									fallbackProcess.StartInfo.UseShellExecute = false;
+									fallbackProcess.StartInfo.RedirectStandardOutput = true;
+									fallbackProcess.StartInfo.RedirectStandardError = true;
+									fallbackProcess.StartInfo.CreateNoWindow = true;
+									fallbackProcess.EnableRaisingEvents = true;
+									if (progress != null)
+										progress.Report(0);
+									fallbackProcess.OutputDataReceived += (s, ev) =>
 										{
 											if (ev.Data != null)
-											{
-												var match = System.Text.RegularExpressions.Regex.Match(ev.Data, @"\[download\]\s+(\d{1,3}\.\d)%");
-												if (match.Success)
 												{
-													if (double.TryParse(match.Groups[1].Value.Replace('.', ','), out double percent))
+													var match = System.Text.RegularExpressions.Regex.Match(ev.Data, @"\[download\]\s+(\d{1,3}\.\d)%");
+													if (match.Success)
 													{
-														int value = (int)Math.Round(percent);
-														progress?.Report(Math.Min(value, 100));
+														if (double.TryParse(match.Groups[1].Value.Replace('.', ','), out double percent))
+															{
+																int value = (int)Math.Round(percent);
+																progress?.Report(Math.Min(value, 100));
+															}
 													}
 												}
-											}
 										};
-
-										try
-										{
-											process.Start();
-											process.BeginOutputReadLine();
-											string error = await process.StandardError.ReadToEndAsync();
-											process.WaitForExit();
-											progress?.Report(100);
-											if (!string.IsNullOrWhiteSpace(error))
-											{
-												// Si l'erreur concerne le format, tente un fallback en 'best'
-												if (error.Contains("requested format not available") || error.Contains("no suitable format found") || error.Contains("format") || error.Contains("ffmpeg"))
-												{
-													// Relance yt-dlp avec le format 'best'
-													var fallbackArgs = $"-f best -o \"{outputTemplate}\" \"{url}\"";
-													var fallbackProcess = new System.Diagnostics.Process();
-													fallbackProcess.StartInfo.FileName = ytDlpExe;
-													fallbackProcess.StartInfo.Arguments = fallbackArgs;
-													fallbackProcess.StartInfo.UseShellExecute = false;
-													fallbackProcess.StartInfo.RedirectStandardOutput = true;
-													fallbackProcess.StartInfo.RedirectStandardError = true;
-													fallbackProcess.StartInfo.CreateNoWindow = true;
-													fallbackProcess.EnableRaisingEvents = true;
-													if (progress != null)
-														progress.Report(0);
-													fallbackProcess.OutputDataReceived += (s, ev) =>
-													{
-														if (ev.Data != null)
-														{
-															var match = System.Text.RegularExpressions.Regex.Match(ev.Data, @"\[download\]\s+(\d{1,3}\.\d)%");
-															if (match.Success)
-															{
-																if (double.TryParse(match.Groups[1].Value.Replace('.', ','), out double percent))
-																{
-																	int value = (int)Math.Round(percent);
-																	progress?.Report(Math.Min(value, 100));
-																}
-															}
-														}
-													};
-													fallbackProcess.Start();
-													fallbackProcess.BeginOutputReadLine();
-													string fallbackError = await fallbackProcess.StandardError.ReadToEndAsync();
-													fallbackProcess.WaitForExit();
-													progress?.Report(100);
-													if (!string.IsNullOrWhiteSpace(fallbackError))
-														throw new Exception("Erreur (fallback best) : " + fallbackError);
-													return;
-												}
-												throw new Exception(error);
-											}
-										}
-										catch (Exception ex)
-										{
-											progress?.Report(0);
-											throw new Exception("Erreur lors du téléchargement : " + ex.Message, ex);
-										}
-									}
+									fallbackProcess.Start();
+									fallbackProcess.BeginOutputReadLine();
+									string fallbackError = await fallbackProcess.StandardError.ReadToEndAsync();
+									fallbackProcess.WaitForExit();
+									progress?.Report(100);
+									if (!string.IsNullOrWhiteSpace(fallbackError))
+										throw new Exception("Erreur (fallback best) : " + fallbackError);
+										return;
+								}
+						throw new Exception(error);
+						}
+					}
+				catch (Exception ex)
+					{
+						progress?.Report(0);
+						throw new Exception("Erreur lors du téléchargement : " + ex.Message, ex);
+					}
+			}
 
 		private void FormatButton_Click(object? sender, EventArgs e)
 		{
